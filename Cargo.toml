@@ -1,25 +1,47 @@
 [package]
-name = "tyl-{module-name}"
+name = "tyl-ollama-inference-adapter"
 version = "0.1.0"
 edition = "2021"
 authors = ["TYL Framework Team"]
 license = "AGPL-3.0"
-repository = "https://github.com/the-yaml-life/tyl-{module-name}"
-description = "{Replace with module description}"
-homepage = "https://github.com/the-yaml-life/tyl-{module-name}"
-documentation = "https://docs.rs/tyl-{module-name}"
+repository = "https://github.com/the-yaml-life/tyl-ollama-inference-adapter"
+description = "TYL Ollama Inference Adapter - Local LLM inference through Ollama with TYL framework integration"
+homepage = "https://github.com/the-yaml-life/tyl-ollama-inference-adapter"
+documentation = "https://docs.rs/tyl-ollama-inference-adapter"
 readme = "README.md"
-keywords = ["{module-keywords}", "hexagonal-architecture", "rust", "tyl-framework"]
-categories = ["development-tools", "rust-patterns"]
+keywords = ["ollama", "llm", "inference", "local", "hexagonal-architecture", "rust", "tyl-framework"]
+categories = ["development-tools", "rust-patterns", "web-programming::http-client"]
 
 [dependencies]
-# Common TYL dependencies - adjust as needed
+# TYL framework dependencies
+tyl-llm-inference-port = { git = "https://github.com/the-yaml-life/tyl-llm-inference-port.git", branch = "main" }
+tyl-errors = { git = "https://github.com/the-yaml-life/tyl-errors.git", branch = "main" }
+tyl-config = { git = "https://github.com/the-yaml-life/tyl-config.git", branch = "main" }
+tyl-logging = { git = "https://github.com/the-yaml-life/tyl-logging.git", branch = "main" }
+tyl-tracing = { git = "https://github.com/the-yaml-life/tyl-tracing.git", branch = "main" }
+
+# Core dependencies
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "1.0"
 uuid = { version = "1.0", features = ["v4"] }
+async-trait = "0.1"
+tokio = { version = "1.0", features = ["full"] }
 
-# Add module-specific dependencies here
+# HTTP client for Ollama API
+reqwest = { version = "0.12", features = ["json", "stream"] }
+
+# Utilities
+chrono = { version = "0.4", features = ["serde"] }
 
 [dev-dependencies]
-# Development dependencies for testing
+tokio-test = "0.4"
+env_logger = "0.11"
+
+[features]
+default = []
+mock = []
+
+[[example]]
+name = "basic_usage"
+required-features = []

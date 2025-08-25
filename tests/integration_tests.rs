@@ -462,9 +462,7 @@ mod server_integration_tests {
                 }
             }
             Err(e) => {
-                println!(
-                    "⚠️  Could not list models (expected if none installed): {e}"
-                );
+                println!("⚠️  Could not list models (expected if none installed): {e}");
             }
         }
     }
@@ -480,18 +478,14 @@ mod server_integration_tests {
 
         match production_adapter.health_check().await {
             Ok(health) => {
-                println!(
-                    "✅ Successfully connected to production Ollama server at {server_host}!"
-                );
+                println!("✅ Successfully connected to production Ollama server at {server_host}!");
                 println!("   Status: {:?}", health.status);
                 if let Some(models) = health.metadata.get("available_models") {
                     println!("   Available models: {models}");
                 }
             }
             Err(e) => {
-                println!(
-                    "⚠️  Could not connect to production server at {server_host}: {e}"
-                );
+                println!("⚠️  Could not connect to production server at {server_host}: {e}");
                 println!(
                     "   This is expected if server is not available or OLLAMA_HOST is not set"
                 );

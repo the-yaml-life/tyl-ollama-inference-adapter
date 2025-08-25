@@ -222,9 +222,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     use tyl_ollama_inference_adapter::ollama_errors;
 
-    let error_examples = [ollama_errors::connection_failed("Ollama server not running"),
+    let error_examples = [
+        ollama_errors::connection_failed("Ollama server not running"),
         ollama_errors::model_not_found("nonexistent-model"),
-        ollama_errors::generation_failed("out of memory")];
+        ollama_errors::generation_failed("out of memory"),
+    ];
 
     println!("  Common error scenarios:");
     for (i, error) in error_examples.iter().enumerate() {

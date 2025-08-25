@@ -426,8 +426,7 @@ impl OllamaAdapter {
 #[async_trait]
 impl InferenceService for OllamaAdapter {
     async fn infer(&self, request: InferenceRequest) -> InferenceResult<InferenceResponse> {
-        self.generate_completion(&request)
-            .await
+        self.generate_completion(&request).await
     }
 
     async fn health_check(&self) -> InferenceResult<HealthCheckResult> {
@@ -551,16 +550,11 @@ pub mod ollama_errors {
     }
 
     pub fn model_not_found(model: &str) -> TylError {
-        TylError::not_found(
-            "ollama_model",
-            format!("Ollama model '{model}' not found"),
-        )
+        TylError::not_found("ollama_model", format!("Ollama model '{model}' not found"))
     }
 
     pub fn model_pull_failed(model: &str, reason: &str) -> TylError {
-        TylError::network(format!(
-            "Failed to pull Ollama model '{model}': {reason}"
-        ))
+        TylError::network(format!("Failed to pull Ollama model '{model}': {reason}"))
     }
 
     pub fn generation_failed(details: &str) -> TylError {

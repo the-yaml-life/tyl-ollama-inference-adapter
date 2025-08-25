@@ -428,7 +428,6 @@ impl InferenceService for OllamaAdapter {
     async fn infer(&self, request: InferenceRequest) -> InferenceResult<InferenceResponse> {
         self.generate_completion(&request)
             .await
-            .map_err(|e| e.into())
     }
 
     async fn health_check(&self) -> InferenceResult<HealthCheckResult> {
@@ -437,9 +436,9 @@ impl InferenceService for OllamaAdapter {
         let health_status = match self.client.get(&url).send().await {
             Ok(response) if response.status().is_success() => HealthStatus::healthy(),
             Ok(response) => {
-                HealthStatus::unhealthy(&format!("Server returned: {}", response.status()))
+                HealthStatus::unhealthy(format!("Server returned: {}", response.status()))
             }
-            Err(e) => HealthStatus::unhealthy(&format!("Connection failed: {}", e)),
+            Err(e) => HealthStatus::unhealthy(format!("Connection failed: {e}")),
         };
 
         let mut result = HealthCheckResult::new(health_status)
@@ -530,6 +529,7 @@ struct OllamaOptions {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct OllamaGenerateResponse {
     response: String,
     done: bool,
@@ -547,33 +547,32 @@ pub mod ollama_errors {
     use super::*;
 
     pub fn connection_failed(details: &str) -> TylError {
-        TylError::network(format!("Failed to connect to Ollama server: {}", details))
+        TylError::network(format!("Failed to connect to Ollama server: {details}"))
     }
 
     pub fn model_not_found(model: &str) -> TylError {
         TylError::not_found(
             "ollama_model",
-            format!("Ollama model '{}' not found", model),
+            format!("Ollama model '{model}' not found"),
         )
     }
 
     pub fn model_pull_failed(model: &str, reason: &str) -> TylError {
         TylError::network(format!(
-            "Failed to pull Ollama model '{}': {}",
-            model, reason
+            "Failed to pull Ollama model '{model}': {reason}"
         ))
     }
 
     pub fn generation_failed(details: &str) -> TylError {
-        TylError::internal(format!("Ollama text generation failed: {}", details))
+        TylError::internal(format!("Ollama text generation failed: {details}"))
     }
 
     pub fn api_error(details: &str) -> TylError {
-        TylError::network(format!("Ollama API error: {}", details))
+        TylError::network(format!("Ollama API error: {details}"))
     }
 
     pub fn invalid_response_format(details: &str) -> TylError {
-        TylError::serialization(format!("Invalid response format from Ollama: {}", details))
+        TylError::serialization(format!("Invalid response format from Ollama: {details}"))
     }
 }
 

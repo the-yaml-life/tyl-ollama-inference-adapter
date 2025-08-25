@@ -124,8 +124,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     ];
 
     for (model_type, template, params_vec) in examples {
-        println!("  🎯 Model Type: {:?}", model_type);
-        println!("  📄 Template: \"{}\"", template);
+        println!("  🎯 Model Type: {model_type:?}");
+        println!("  📄 Template: \"{template}\"");
 
         let mut params = HashMap::new();
         for (key, value) in params_vec {
@@ -135,7 +135,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let request = InferenceRequest::new(template, params, model_type);
         let rendered = request.render_template();
 
-        println!("  ✨ Rendered: \"{}\"", rendered);
+        println!("  ✨ Rendered: \"{rendered}\"");
         println!("  🔧 Best model: codellama for code, llama2 for general tasks");
         println!();
     }
@@ -150,11 +150,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("   Status: {:?}", health.status);
             println!("   Service: ollama");
             if let Some(models_count) = health.metadata.get("available_models") {
-                println!("   Available models: {}", models_count);
+                println!("   Available models: {models_count}");
             }
         }
         Err(e) => {
-            println!("❌ Health check failed: {}", e);
+            println!("❌ Health check failed: {e}");
             println!("   This is expected if Ollama server is not running");
             println!("   On Ishtar server: Ollama should be available");
         }
@@ -174,8 +174,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for text in sample_texts {
         let token_count = adapter.count_tokens(text)?;
-        println!("  Text: \"{}\"", text);
-        println!("  Estimated tokens: {}", token_count);
+        println!("  Text: \"{text}\"");
+        println!("  Estimated tokens: {token_count}");
         println!();
     }
 
@@ -222,11 +222,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     use tyl_ollama_inference_adapter::ollama_errors;
 
-    let error_examples = vec![
-        ollama_errors::connection_failed("Ollama server not running"),
+    let error_examples = [ollama_errors::connection_failed("Ollama server not running"),
         ollama_errors::model_not_found("nonexistent-model"),
-        ollama_errors::generation_failed("out of memory"),
-    ];
+        ollama_errors::generation_failed("out of memory")];
 
     println!("  Common error scenarios:");
     for (i, error) in error_examples.iter().enumerate() {

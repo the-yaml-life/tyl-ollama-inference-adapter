@@ -288,7 +288,7 @@ mod tyl_framework_integration {
 
         // General tasks should be balanced
         let general_tokens = ModelType::General.typical_max_tokens();
-        assert!(general_tokens >= 1024 && general_tokens <= 4096);
+        assert!((1024..=4096).contains(&general_tokens));
     }
 
     #[test]
@@ -410,7 +410,6 @@ mod tyl_framework_integration {
 #[cfg(test)]
 mod server_integration_tests {
     use super::*;
-    use tokio;
 
     // Helper function to check if Ollama server is available
     async fn is_ollama_available() -> bool {
@@ -464,8 +463,7 @@ mod server_integration_tests {
             }
             Err(e) => {
                 println!(
-                    "⚠️  Could not list models (expected if none installed): {}",
-                    e
+                    "⚠️  Could not list models (expected if none installed): {e}"
                 );
             }
         }
@@ -483,18 +481,16 @@ mod server_integration_tests {
         match production_adapter.health_check().await {
             Ok(health) => {
                 println!(
-                    "✅ Successfully connected to production Ollama server at {}!",
-                    server_host
+                    "✅ Successfully connected to production Ollama server at {server_host}!"
                 );
                 println!("   Status: {:?}", health.status);
                 if let Some(models) = health.metadata.get("available_models") {
-                    println!("   Available models: {}", models);
+                    println!("   Available models: {models}");
                 }
             }
             Err(e) => {
                 println!(
-                    "⚠️  Could not connect to production server at {}: {}",
-                    server_host, e
+                    "⚠️  Could not connect to production server at {server_host}: {e}"
                 );
                 println!(
                     "   This is expected if server is not available or OLLAMA_HOST is not set"

@@ -432,7 +432,6 @@ impl InferenceService for OllamaAdapter {
     }
 
     async fn health_check(&self) -> InferenceResult<HealthCheckResult> {
-
         let url = format!("{}/api/tags", self.config.host);
 
         let health_status = match self.client.get(&url).send().await {
@@ -552,11 +551,17 @@ pub mod ollama_errors {
     }
 
     pub fn model_not_found(model: &str) -> TylError {
-        TylError::not_found("ollama_model", format!("Ollama model '{}' not found", model))
+        TylError::not_found(
+            "ollama_model",
+            format!("Ollama model '{}' not found", model),
+        )
     }
 
     pub fn model_pull_failed(model: &str, reason: &str) -> TylError {
-        TylError::network(format!("Failed to pull Ollama model '{}': {}", model, reason))
+        TylError::network(format!(
+            "Failed to pull Ollama model '{}': {}",
+            model, reason
+        ))
     }
 
     pub fn generation_failed(details: &str) -> TylError {

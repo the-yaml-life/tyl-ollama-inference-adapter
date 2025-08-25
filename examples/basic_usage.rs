@@ -56,13 +56,34 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     if !base_models.is_empty() {
-        println!("  🦙 Base models: {}", base_models.join(", "));
+        println!(
+            "  🦙 Base models: {}",
+            base_models
+                .iter()
+                .map(|s| s.as_str())
+                .collect::<Vec<&str>>()
+                .join(", ")
+        );
     }
     if !code_models.is_empty() {
-        println!("  💻 Code models: {}", code_models.join(", "));
+        println!(
+            "  💻 Code models: {}",
+            code_models
+                .iter()
+                .map(|s| s.as_str())
+                .collect::<Vec<&str>>()
+                .join(", ")
+        );
     }
     if !chat_models.is_empty() {
-        println!("  💬 Chat models: {}", chat_models.join(", "));
+        println!(
+            "  💬 Chat models: {}",
+            chat_models
+                .iter()
+                .map(|s| s.as_str())
+                .collect::<Vec<&str>>()
+                .join(", ")
+        );
     }
 
     println!();
@@ -167,9 +188,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_host("http://localhost:11434")
         .with_timeout_seconds(60);
 
-    // Ishtar server configuration
-    let ishtar_config = OllamaConfig::new("codellama")
-        .with_host("http://ishtar:11434") // Assuming Ollama runs on Ishtar
+    // Production server configuration (configurable via environment)
+    let server_host =
+        std::env::var("OLLAMA_HOST").unwrap_or_else(|_| "http://localhost:11434".to_string());
+    let server_model =
+        std::env::var("OLLAMA_DEFAULT_MODEL").unwrap_or_else(|_| "codellama".to_string());
+
+    let server_config = OllamaConfig::new(&server_model)
+        .with_host(&server_host)
         .with_timeout_seconds(180) // Longer timeout for server
         .with_max_retries(5);
 
@@ -177,10 +203,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("    Host: {}", local_config.host);
     println!("    Model: {}", local_config.default_model);
 
-    println!("\n  🌐 Ishtar server:");
-    println!("    Host: {}", ishtar_config.host);
-    println!("    Model: {}", ishtar_config.default_model);
-    println!("    Timeout: {} seconds", ishtar_config.timeout_seconds);
+    println!("\n  🌐 Production server:");
+    println!(
+        "    Host: {} (from OLLAMA_HOST env var)",
+        server_config.host
+    );
+    println!(
+        "    Model: {} (from OLLAMA_DEFAULT_MODEL env var)",
+        server_config.default_model
+    );
+    println!("    Timeout: {} seconds", server_config.timeout_seconds);
 
     println!();
 
@@ -201,10 +233,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("  {}. {}", i + 1, error);
     }
 
-    println!("\n  💡 On Ishtar server:");
+    println!("\n  💡 On production server:");
+    println!("     • Set OLLAMA_HOST environment variable (e.g., http://server-name:11434)");
+    println!("     • Set OLLAMA_DEFAULT_MODEL environment variable (e.g., llama2:13b)");
     println!("     • Ollama should be pre-configured and running");
     println!("     • Models should be already pulled and available");
-    println!("     • Use appropriate host configuration for server deployment");
 
     println!("\n✅ All examples completed successfully!");
 
